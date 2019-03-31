@@ -1,0 +1,94 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    {% include "_maket/metadata.html" %}
+
+    <style type="text/css">
+        html {
+            position: relative;
+            min-height: 100%;
+        }
+
+        body {
+            background-color: #50505033;
+            {#background-color: #ffa7a7;#}
+            margin-bottom: 60px;
+        }
+
+        .main {
+            padding-top: 25px;
+            padding-bottom: 250px;
+            position: relative;
+        }
+
+        .page-footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: #f5f5f5;
+        }
+
+        .myheader {
+            padding-top: 50px;
+            padding-bottom: 20px;
+        }
+    </style>
+
+    {% block css2 %}{% endblock %}
+</head>
+
+<body>
+
+{% csrf_token %}
+
+{% include "_maket/header.html" %}
+
+<div class="container">
+    <div class="main">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+
+{% include "_maket/footer.html" %}
+
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="{% static 'js/mdb4/mdb.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/mdb4/compiled.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/mdb4/footer-functions.js' %}"></script>
+<script type='text/javascript' src='https://mdbootstrap.com/wp-admin/load-scripts.php?c=gzip&amp;load%5B%5D=wp-embed,jquery-ui-core,jquery-ui-widget,jquery-ui-mouse,jquery-ui-slider&amp;ver=4.9.8'></script>
+<script type='text/javascript' src='https://mdbootstrap.com/wp-content/themes/mdbootstrap4/js/4.5.13/compiled.0.min.js?ver=4.5.13'></script>
+<script type="text/javascript" src="{% static 'js/alert.js' %}"></script>
+
+<script>
+
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
+
+    function csrfSafeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $(function () {
+        $('[data-toggle="popover"]').popover({trigger:'hover'});
+    });
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+
+</script>
+
+{% block js %}{% endblock %}
+
+</body>
+</html>
