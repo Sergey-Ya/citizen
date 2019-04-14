@@ -1,0 +1,153 @@
+{% extends "_maket/base.html" %}
+
+{% load static %}
+
+{% block css2 %}
+    <style type="text/css">
+        .login-form {
+            padding-top: 130px;
+        }
+         .main {
+            padding-bottom: 0px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+
+
+    <div class="row text-center login-form">
+        <div class="col-6 offset-md-3">
+            <!-- Default form login -->
+            <form action="{% url 'login' %}" method="post" class="text-center border border-light p-5">
+                {% csrf_token %}
+
+                <p class="h4 mb-4">Авторизация</p>
+
+                <!-- Email -->
+                <input type="text" id="phone" name="phone" class="form-control mb-4" placeholder="Номер телефона">
+
+                <!-- Password -->
+                <input type="password" name="password" class="form-control mb-4" placeholder="Пароль">
+
+                <!-- Forgot password -->
+                <a href="">Восстановить пароль</a>
+
+                <!-- Sign in button -->
+
+                <button class="btn btn-info btn-block my-4" type="submit">Войти</button>
+
+                <!-- Register -->
+                <p>Не являетесь участником?
+                    <a href="">Регистрация</a>
+                </p>
+
+            </form>
+
+        </div>
+    </div>
+
+
+{% endblock %}
+
+
+{% block js %}
+    <script src="https://unpkg.com/imask"></script>
+
+    <script type="text/javascript">
+
+        var phone = new IMask(
+            document.getElementById('phone'), {
+                mask: '+{7}(000)000-00-00'
+            });
+
+        function sendSMS() {
+            $.ajax({
+                type: "POST",
+                url: "ajax/",
+                data: {
+                    action: 'send_sms',
+                    phone: $("#phone").val()
+                },
+                cache: false,
+
+                success: function (data) {
+                    $.alert("SendOK", {type: 'success'});
+                },
+
+                error: function (request, error) {
+                    $.alert(request.responseText, {type: 'danger'});
+                },
+
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                },
+            });
+
+        }
+
+
+        function login() {
+            $.ajax({
+                type: "POST",
+                url: "ajax/",
+                data: {
+                    action: 'send_sms',
+                    phone: $("#phone").val()
+                },
+                cache: false,
+
+                success: function (data) {
+                    $.alert("SendOK", {type: 'success'});
+                },
+
+                error: function (request, error) {
+                    $.alert(request.responseText, {type: 'danger'});
+                },
+
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                },
+            });
+
+        }
+
+
+
+    </script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

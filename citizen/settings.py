@@ -26,7 +26,9 @@ SECRET_KEY = 'i=91&y(f#c_ae11s9dyu&l*q@u@^(+8r!wapu(a6c+^e@3vni@'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '192.168.1.38'
+    '192.168.1.38',
+    '127.0.0.1',
+    'yasergey.pythonanywhere.com'
 ]
 
 
@@ -125,3 +127,5 @@ DATE_FORMAT = 'Y d M H:i'
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+

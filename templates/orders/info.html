@@ -1,0 +1,831 @@
+{% extends "_maket/base.html" %}
+
+{% load static %}
+
+{% block css2 %}
+    <style type="text/css">
+        .table-bordered {
+            border-color: #3e455166;
+        }
+        .table thead th {
+            border-color: #3e455166;
+        }
+        .create-order th {
+            border-left: none !important;
+            border-right: none !important;
+        }
+        .table-bordered th {
+            border-color: #3e455166;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .md-form {
+            margin-bottom: 0;
+            margin-top: 0;
+        }
+
+        .form-control {
+            font-size: 0.9rem;
+            padding: 0 !important;
+            margin-bottom: 0px !important;
+        }
+
+        {#select config#}
+        .select-dropdown {
+            margin-bottom: 0px !important;
+        }
+        .select-wrapper input.select-dropdown {
+            height: 23px !important;
+            font-size: 0.9rem;
+        }
+        .select-wrapper span.caret {
+            margin-top: -10px;
+        }
+        {#end#}
+
+        .col-form-label {
+            font-size: 0.9rem;
+            padding: 0 !important;
+            margin-bottom: 0px !important;
+        }
+        .form-group .col-sm-2 {
+            padding-right: 0px;
+        }
+
+        .my-disabled {
+            border-bottom: none !important;
+        }
+
+        .col-sm-1 {
+            padding-right: 0px !important;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+
+    <!--HEADER-->
+    <div class="row myheader text-center">
+        <div class="col">
+            <h2>Заказ - {{ order.name }}</h2>
+        </div>
+    </div>
+
+
+    <!--CONTENT-->
+    <div class="row">
+        <div class="col">
+
+            <div class="row myheader text-center">
+                <div class="col">
+                    <h4>Список ящиков</h4>
+                </div>
+            </div>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Кол-во</th>
+                    <th scope="col">Имя</th>
+                    <th scope="col">Столешница</th>
+                    <th scope="col">HZ</th>
+                    <th scope="col">Пленка</th>
+                    <th scope="col">Пленка гл</th>
+                    <th scope="col">Пластик</th>
+                    <th scope="col">Фасады</th>
+                    <th scope="col">Петли</th>
+                    <th scope="col">Навески</th>
+                    <th scope="col">Крыша</th>
+                    <th scope="col">Багет</th>
+                    <th scope="col">Ручки</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for cupboard in cupboards %}
+                    <tr>
+                        <td>{{ cupboard.count }}</td>
+                        <td>{{ cupboard.base_id.name }}</td>
+                        <td>{{ cupboard.base_id.tabletop }}</td>
+                        <td>{{ cupboard.base_id.hz }}</td>
+                        <td>{{ cupboard.base_id.skin }}</td>
+                        <td>{{ cupboard.base_id.skingl }}</td>
+                        <td>{{ cupboard.base_id.plastic }}</td>
+                        <td>{{ cupboard.base_id.facade }}</td>
+                        <td>{{ cupboard.base_id.loop }}</td>
+                        <td>{{ cupboard.base_id.hitch }}</td>
+                        <td>{{ cupboard.base_id.roof }}</td>
+                        <td>{{ cupboard.base_id.baguette }}</td>
+                        <td>{{ cupboard.base_id.handle }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <a onclick="showAddCupboardForm()" class="pull-right">Добавить запись <i class="fas fa-plus color-success"></i></a>
+
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col">
+
+            <div class="row myheader text-center">
+                <div class="col">
+                    <h4>Выписка</h4>
+                </div>
+            </div>
+
+            {% for item in price %}
+                <div class="row">
+                    <div class="col-8 offset-2">
+
+                        <!--tabletop-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">СТОЛЕШНИЦА (мп)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled" id="tabletop" value="{{ item.tabletop }}" disabled>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="tabletopcost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.tabletop %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="tabletopsum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--tabletopend-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">- окончания (шт)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control" id="tabletopend" value="{{ item.tabletop_end }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="tabletopendcost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.tabletopend %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="tabletopendsum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--tabletopedge-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">- кромка (мп)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control" id="tabletopedge" value="{{ item.tabletop_edge }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="tabletopedgecost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.tabletopedge %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="tabletopedgesum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--plinth-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">ПЛИНТУС (мп)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control" id="plinth" value="{{ item.plinth }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="plinthcost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.plinth %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="plinthsum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--plinthcup-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">- заглушки (шт)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control" id="plinthcup" value="{{ item.plinth_cap }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="plinthcupcost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.plinthcup %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="plinthcupsum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--wallpanel-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">СТЕНОВАЯ ПАНЕЛЬ (мп)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control" id="wallpanel" value="{{ item.wall_panel }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="wallpanelcost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.wallpanel %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="wallpanelsum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--wallcap-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">- окончания (шт)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control" id="wallcap" value="{{ item.wall_cap }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="wallcapcost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.wallcap %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="wallcapsum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--loop-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">ПЕТЛИ (шт)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled" id="loop" value="{{ item.loop }}" disabled>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="loopcost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.loop %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="loopsum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--handle-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">РУЧКИ (шт)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled" id="handle" value="{{ item.handle }}" disabled>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="handlecost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.handle %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="handlesum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--hitch-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">НАВЕСКИ (компл)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled" id="hitch" value="{{ item.hitch }}" disabled>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="hitchcost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.hitch %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="hitchsum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--rail-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">РЕЙКА (шт)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control" id="rail" value="{{ item.rail }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="railcost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.rail %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="railsum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--baguette-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">БАГЕТ (мп)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled" id="baguette" value="{{ item.baguette }}" disabled>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="baguettecost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.baguette %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="baguettesum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--roof-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">КРЫША (м2)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled" id="roof" value="{{ item.roof }}" disabled>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="roofcost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.roof %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="roofsum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--baluster-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">БАЛЯСИНЫ (мп)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control" id="baluster" value="{{ item.baluster }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="balustercost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.baluster %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="balustersum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--socle-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">ЦОКОЛЬ (мп)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control" id="socle" value="{{ item.socle }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="soclecost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.socle %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="soclesum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--drying-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">СУШКА (шт)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control" id="drying" value="{{ item.drying }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="dryingcost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.drying %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="dryingsum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--backlight-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">ПОДСВЕТКА (шт)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control" id="backlight" value="{{ item.backlight }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="backlightcost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.backlight %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="backlightsum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--facade-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">ФАСАДЫ (м2)</label>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled" id="facade" value="{{ item.facade }}" disabled>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="facadecost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.facade %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="facadesum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--facadeskin-->
+                        <div class="form-group row">
+                            <div class="col-sm-4">
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="facadeskinradio" name="facaderadios" checked>
+                                    <label class="form-check-label" for="facadeskinradio">- пленка (м2)</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled" id="facadeskin" value="{{ item.facadeskin }}" disabled>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="facadeskincost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.facadeskin %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled sum" id="facadeskinsum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--facadeskingl-->
+                        <div class="form-group row">
+                            <div class="col-sm-4">
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="facadeskinglradio" name="facaderadios">
+                                    <label class="form-check-label" for="facadeskinglradio">- пленка гл (м2)</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled" id="facadeskingl" value="{{ item.facadeskingl }}" disabled>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="facadeskinglcost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.facadeskingl %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled" id="facadeskinglsum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--facadeplastic-->
+                        <div class="form-group row">
+                            <div class="col-sm-4">
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="facadeplasticradio" name="facaderadios">
+                                    <label class="form-check-label" for="facadeplasticradio">- пластик (м2)</label>
+                                </div>
+                            </div>
+                            <div class="col-sm-1">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled" id="facadeplastic" value="{{ item.facadeplastic }}" disabled>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="md-form mt-0">
+                                    <select id="facadeplasticcost" class="mdb-select md-form" required>
+                                        <option value="0" disabled selected>нет</option>
+                                        {% for item in prices.facadeplastic %}
+                                            <option value="{{ item.cost }}">{{ item.name }} / {{ item.cost }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control my-disabled" id="facadeplasticsum" value="" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--other-->
+                        <div class="form-group row">
+                            <label for="2" class="col-sm-4 col-form-label">ДР ФУРНИТУРА (руб)</label>
+                            <div class="col-sm-1">
+                            </div>
+                            <div class="col-sm-5">
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control sum" id="other" value="{{ item.other }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--totalsum-->
+                        <div class="form-group row">
+                            <label for="2" class="col-sm-4 col-form-label"><b>ИТОГО (руб)</b></label>
+                            <div class="col-sm-1">
+                            </div>
+                            <div class="col-sm-5">
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control" id="totalsum" value="{{ item.other }}">
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+
+    {% include "orders/addcupboardmodal.html" %}
+
+
+{% endblock %}
+
+
+{% block js %}
+    <script type='text/javascript' src='https://mdbootstrap.com/wp-admin/load-scripts.php?c=gzip&amp;load%5B%5D=jquery-core,jquery-migrate&amp;ver=5.1.1'></script>
+
+    <script type='text/javascript' src='https://mdbootstrap.com/wp-content/themes/mdbootstrap4/js/4.7.6/compiled.1022.min.js?ver=4.7.6'></script>
+
+    <script type="text/javascript">
+
+        $("input").keyup(function() {
+            if (!$(this).val()) {
+                $(this).val('0');
+            }
+            var id = $(this).attr('id');
+            var rez = $(this).val() * $("#" + id + "cost").val();
+            $("#" + id + "sum").val(rez);
+            calculated();
+        });
+
+        $("select").on('change', function() {
+            var idcost = $(this).attr('id');
+            var id = idcost.replace('cost','');
+            var rez = $("#" + id).val() * $(this).val();
+            $("#" + id + "sum").val(rez);
+            calculated();
+        });
+
+        $("input[name='facaderadios']").on('change', function () {
+            $("input[name='facaderadios']").each(function() {
+                var id = $(this).attr('id').replace('radio','');
+                $("#" + id + "sum").removeClass('sum');
+            });
+            var id = $(this).attr('id').replace('radio','');
+            $("#" + id + "sum").addClass('sum');
+            calculated();
+        });
+
+
+        function calculated() {
+            var totalsum = 0;
+            $(".sum").each(function() {
+                if ($(this).val()) {
+                    totalsum += parseInt($(this).val());
+                }
+            });
+            $("#totalsum").val(totalsum);
+        }
+
+
+
+
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+
+        function showAddCupboardForm() {
+            {#$("#ordername").val('');#}
+            {#$("#ordercomment").val('');#}
+            $('#modalAddCupboardForm').modal('show');
+        }
+
+
+
+    </script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

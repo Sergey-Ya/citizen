@@ -9,16 +9,18 @@ class Order(models.Model):
 
 class Price(models.Model):
     order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
-    tabletop_end = models.IntegerField()
-    tabletop_edge = models.IntegerField()
-    plinth = models.IntegerField()
-    plinth_cap = models.IntegerField()
-    wall_panel = models.IntegerField()
-    wall_cap = models.IntegerField()
-    rail = models.IntegerField()
-    baluster = models.IntegerField()
-    drying = models.IntegerField()
-    backlight = models.IntegerField()
+    tabletop_end = models.IntegerField(default=0)
+    tabletop_edge = models.IntegerField(default=0)
+    plinth = models.IntegerField(default=0)
+    plinth_cap = models.IntegerField(default=0)
+    wall_panel = models.IntegerField(default=0)
+    wall_cap = models.IntegerField(default=0)
+    rail = models.IntegerField(default=0)
+    baluster = models.IntegerField(default=0)
+    socle = models.IntegerField(default=0)
+    drying = models.IntegerField(default=0)
+    backlight = models.IntegerField(default=0)
+    other = models.IntegerField(default=0)
     counttabletop = None
     countloop = None
     counthandle = None
@@ -26,6 +28,9 @@ class Price(models.Model):
     countbaguette = None
     countroof = None
     countfacade = None
+    countfacadeskin = None
+    countfacadeskingl = None
+    countfacadeplastic = None
 
 class Base(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
@@ -54,4 +59,5 @@ class Cost(models.Model):
     costgroup = models.ForeignKey(CostGroup, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, blank=True, null=True)
     cost = models.IntegerField()
+    default = models.BooleanField(default=False)
     comment = models.TextField(blank=True, null=True)

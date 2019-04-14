@@ -1,0 +1,280 @@
+{% extends "_maket/base.html" %}
+{% load static %}
+
+
+{% block css2 %}
+    <style type="text/css">
+        .md-tabs {
+            background-color: #3e4551cc !important;
+        }
+        #myTabContent {
+            padding-left: 3rem;
+            padding-right: 3rem;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+
+    <!--HEADER-->
+    <div class="row myheader text-center">
+        <div class="col">
+            <h2>Прайс листы</h2>
+        </div>
+    </div>
+
+    <!--CONTENT-->
+    <div class="row">
+        <div class="col">
+
+            {#            <ul class="nav nav-tabs" id="myTab" role="tablist">#}
+            <ul class="nav nav-tabs md-tabs" id="myTabMD" role="tablist">
+                {% for price in prices %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if forloop.counter == 1 %}active{% endif %}" id="tab-{{ price.id }}" data-toggle="tab" href="#link-{{ price.id }}" role="tab" aria-controls="link-{{ price.id }}"
+                           aria-selected="{% if forloop.counter == 1 %}true{% else %}false{% endif %}">{{ price.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                {% for price in prices %}
+                    <div class="tab-pane fade {% if forloop.counter == 1 %}show active{% endif %}" id="link-{{ price.id }}" role="tabpanel" aria-labelledby="tab-{{ price.id }}">
+
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th style="width: 50px;"></th>
+                                <th>Имя</th>
+                                <th>Цена</th>
+                                <th style="width: 100px;"></th>
+                            </tr>
+                            </thead>
+                            <tbody id="price-{{ price.id }}">
+                            {% for cost in price.comment %}
+                                <tr id="cost-{{ cost.id }}" costid="{{ cost.id }}">
+                                    <td class="costdefault">{% if not cost.default %}<a onclick="setDefaultCost('{{ cost.id }}')"><i class="fas fa-thumbs-up"></i></a>{% endif %}</td>
+                                    <td id="costname-{{ cost.id }}">{{ cost.name }}</td>
+                                    <td id="costcost-{{ cost.id }}">{{ cost.cost }}</td>
+                                    <td class="text-right">
+                                        <a onclick="showModalCostForm('edit', '{{ cost.id }}')"><i class="fas fa-pencil-alt"></i></a>
+                                        <a onclick="delCost('{{ cost.id }}')"><i class="fas fa-trash-alt"></i></a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <a onclick="showModalCostForm('add', '{{ price.id }}')" class="pull-right">Добавить запись <i class="fas fa-plus color-success"></i></a>
+
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+
+
+    {% include "prices/costmodal.html" %}
+
+
+
+{% endblock %}
+
+
+{% block js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.14.0/jquery.validate.min.js"></script>
+    <script src="https://unpkg.com/imask"></script>
+
+    <script type="text/javascript">
+
+        var costcost = new IMask(document.getElementById('costcost'), {mask: Number});
+
+        function showModalCostForm(action, param) {
+            $("#action").val(action);
+            $("#param").val(param);
+            if (action == 'add') {
+                $("#costname").val('');
+                $("#costcost").val('');
+            } else if (action == 'edit') {
+                $("#costname").val($("#costname-" + param).html());
+                $("#costcost").val($("#costcost-" + param).html());
+            }
+            $('#modalCostForm').modal('show');
+        }
+
+        $('#cost-form').validate ({
+            debug: true,
+            errorClass: "active",
+            rules: {
+                costname: {
+                    required: true,
+                    minlength: 3
+                },
+                costcost: {
+                    required: true,
+                },
+                action: "required"
+            },
+            messages: {
+                costname: {
+                    required: "Обязательное поле",
+                    minlength: "Минимальная длинна Имени 3 символа"
+                },
+                costcost: {
+                    required: "Обязательное поле",
+                },
+                action: "Please provide some data"
+            },
+
+            submitHandler: function(form) {
+                addOrEditCost(form.action.value, form.param.value, form.costname.value, form.costcost.value)
+                $('#modalCostForm').modal('hide');
+                {#form.submit();#}
+            }
+        });
+
+
+        function setDefaultCost(costid) {
+            $.ajax({
+                type: "POST",
+                url: "ajax/",
+                data: {
+                    action: 'set_defaultcost',
+                    costid: costid
+                },
+                cache: false,
+
+                success: function (data) {
+                    $("#price-" + data).find("tr").each(function() {
+                        var thiscostid = $(this).attr("costid");
+                        if (thiscostid == costid) {
+                            $(this).find(".costdefault").html("")
+                        } else {
+                            $(this).find(".costdefault").html("<a onclick='setDefaultCost(\"" + thiscostid + "\")'><i class='fas fa-thumbs-up'></i></a>")
+                        }
+                    });
+                    $.alert("Запись успешно установлена значением по умолчанию", {type: 'success'});
+                },
+
+                error: function (request, error) {
+                    $.alert(request.responseText, {type: 'danger'});
+                },
+
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                },
+            });
+        }
+
+        function addOrEditCost(action, param, name, cost) {
+            action += '_cost';
+            $.ajax({
+                type: "POST",
+                url: "ajax/",
+                data: {
+                    action: action,
+                    param: param,
+                    name: name,
+                    cost: cost
+                },
+                cache: false,
+
+                success: function (data) {
+                    if (action == 'add_cost') {
+                        $("#price-" + param).append("<tr id='cost-" + data + "' costid='" + data + "'>" +
+                            "<td class='costdefault'><a onclick='setDefaultCost(\"" + data + "\")'><i class='fas fa-thumbs-up'></i></a></td>" +
+                            "<td id='costname-" + data + "'>" + name + "</td>" +
+                            "<td id='costcost-" + data + "'>" + cost + "</td>" +
+                            "<td>" +
+                            "<a onclick='showModalCostForm(\"edit\", \"" + data + "\")'><i class='fas fa-pencil-alt'></i></a>\n" +
+                            "<a onclick='delCost(\"" + data + "\")'><i class='fas fa-trash-alt'></i></a>" +
+                            "</td>" +
+                            "</tr>");
+                        $.alert("Запись успешно добавлена", {type: 'success'});
+                    } else if (action == 'edit_cost') {
+                        $("#costname-" + param).html(name);
+                        $("#costcost-" + param).html(cost);
+                        $.alert("Запись успешно отредактирована", {type: 'success'});
+                    }
+                },
+
+                error: function (request, error) {
+                    $.alert(request.responseText, {type: 'danger'});
+                },
+
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                },
+            });
+        }
+
+        function delCost(costid) {
+            $.ajax({
+                type: "POST",
+                url: "ajax/",
+                data: {
+                    action: 'del_cost',
+                    costid: costid
+                },
+                cache: false,
+
+                success: function (data) {
+                    $("#cost-" + costid).remove();
+                    $.alert("Запись успешно удалена", {type: 'success'});
+                },
+
+                error: function (request, error) {
+                    $.alert(request.responseText, {type: 'danger'});
+                },
+
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                },
+            });
+        }
+
+
+
+
+
+
+    </script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
