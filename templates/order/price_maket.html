@@ -1,0 +1,27 @@
+<div class="col-sm-1">
+    <div class="md-form mt-0">
+        <input type="text" class="form-control count {% if dis == 1 %}my-disabled{% endif %}" id="{{ iname }}" value="{{ ivalue }}" {% if dis == 1 %}disabled{% endif %}>
+    </div>
+</div>
+
+<div class="col-sm-5">
+    <div class="md-form mt-0">
+        <select id="{{ iname }}_cost" class="mdb-select md-form" required>
+            <option value="0" selected>нет</option>
+            {% for cost in icosts %}
+                <option value="{{ cost.cost }}" costid="{{ cost.id }}"
+                        {% if icostid %}
+                        {% if cost.id == icostid %}selected{% endif %}
+                        {% else %}
+                        {% if cost.default %}selected{% endif %}
+                        {% endif %}>{{ cost.name }} / {{ cost.cost }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<div class="col-sm-2">
+    <div class="md-form mt-0">
+        <input type="text" class="form-control my-disabled sum" id="{{ iname }}sum" value="" disabled>
+    </div>
+</div>

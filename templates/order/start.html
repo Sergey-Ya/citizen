@@ -1,0 +1,468 @@
+{% extends "_maket/base.html" %}
+
+{% load static %}
+
+{% block css2 %}
+    <style type="text/css">
+        .table-bordered {
+            border-color: #3e455166;
+        }
+        .table thead th {
+            border-color: #3e455166;
+        }
+        .create-order th {
+            border-left: none !important;
+            border-right: none !important;
+        }
+        .table-bordered th {
+            border-color: #3e455166;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .md-form {
+            margin-bottom: 0;
+            margin-top: 0;
+        }
+
+        .form-control {
+            font-size: 0.9rem;
+            padding: 0 !important;
+            margin-bottom: 0px !important;
+        }
+
+        {#select config#}
+        .select-dropdown {
+            margin-bottom: 0px !important;
+        }
+        .select-wrapper input.select-dropdown {
+            height: 23px !important;
+            font-size: 0.9rem;
+        }
+        .select-wrapper span.caret {
+            margin-top: -10px;
+        }
+        {#end#}
+
+        .col-form-label {
+            font-size: 0.9rem;
+            padding: 0 !important;
+            margin-bottom: 0px !important;
+        }
+        .form-group .col-sm-2 {
+            padding-right: 0px;
+        }
+
+        .my-disabled {
+            border-bottom: none !important;
+        }
+
+        .col-sm-1 {
+            padding-right: 0px !important;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+
+    <!--HEADER-->
+    <div class="row myheader text-center">
+        <div class="col">
+            <h2>Заказ - {{ order.name }}</h2>
+        </div>
+    </div>
+
+
+    <!--CONTENT-->
+    <div class="row">
+        <div class="col">
+
+            <h4 class="text-center">Список ящиков</h4>
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Кол-во</th>
+                    <th scope="col">Имя</th>
+                    <th scope="col">Столешница</th>
+                    <th scope="col">HZ</th>
+                    <th scope="col">Пленка</th>
+                    <th scope="col">Пленка гл</th>
+                    <th scope="col">Пластик</th>
+                    <th scope="col">Фасады</th>
+                    <th scope="col">Петли</th>
+                    <th scope="col">Навески</th>
+                    <th scope="col">Крыша</th>
+                    <th scope="col">Багет</th>
+                    <th scope="col">Ручки</th>
+                    <th style="width: 100px"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in cupboard %}
+                    <tr>
+                        <td id="cupboardlstId{{ item.id }}" style="display: none">{{ item.cupboardlst_id_id }}</td>
+                        <td id="cupboardCount{{ item.id }}">{{ item.count }}</td>
+                        <td>{{ item.cupboardlst_id.name }}</td>
+                        <td>{{ item.cupboardlst_id.tabletop }}</td>
+                        <td>{{ item.cupboardlst_id.hz }}</td>
+                        <td>{{ item.cupboardlst_id.skin }}</td>
+                        <td>{{ item.cupboardlst_id.skingl }}</td>
+                        <td>{{ item.cupboardlst_id.plastic }}</td>
+                        <td>{{ item.cupboardlst_id.facade }}</td>
+                        <td>{{ item.cupboardlst_id.loop }}</td>
+                        <td>{{ item.cupboardlst_id.hitch }}</td>
+                        <td>{{ item.cupboardlst_id.roof }}</td>
+                        <td>{{ item.cupboardlst_id.baguette }}</td>
+                        <td>{{ item.cupboardlst_id.handle }}</td>
+                        <td class="text-right">
+                            <a onclick="showCupboardModalForm('edit', '{{ item.id }}')"><i class="fas fa-pencil-alt"></i></a>
+                            <a onclick="showConfirmForm('Удалить ящик из списка?', delCupboard, '{{ item.id }}');"><i class="fas fa-trash-alt"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <a onclick="showCupboardModalForm('add')" class="pull-right">Добавить ящик <i class="fas fa-plus color-success"></i></a>
+
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col">
+
+            <h4 class="text-center">Выписка</h4>
+
+            {% for item in price %}
+                <div class="row">
+                    <div class="col-8 offset-2">
+
+
+                        <!--tabletop-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">СТОЛЕШНИЦА (мп)</label>
+                            {% include "order/price_maket.html" with iname='tabletop' ivalue=item.tabletop icosts=costs.tabletop icostid=item.tabletop_cost_id_id dis=1 %}
+                        </div>
+
+                        <!--tabletopend-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">- окончания (шт)</label>
+                            {% include "order/price_maket.html" with iname='tabletopend' ivalue=item.tabletopend icosts=costs.tabletopend icostid=item.tabletopend_cost_id_id %}
+                        </div>
+
+                        <!--tabletopedge-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">- кромка (мп)</label>
+                            {% include "order/price_maket.html" with iname='tabletopedge' ivalue=item.tabletopedge icosts=costs.tabletopedge icostid=item.tabletopedge_cost_id_id %}
+                        </div>
+
+                        <!--plinth-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">ПЛИНТУС (мп)</label>
+                            {% include "order/price_maket.html" with iname='plinth' ivalue=item.plinth icosts=costs.plinth icostid=item.plinth_cost_id_id %}
+                        </div>
+
+                        <!--plinthcap-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">- заглушки (шт)</label>
+                            {% include "order/price_maket.html" with iname='plinthcap' ivalue=item.plinthcap icosts=costs.plinthcap icostid=item.plinthcap_cost_id_id %}
+                        </div>
+
+                        <!--wallpanel-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">СТЕНОВАЯ ПАНЕЛЬ (мп)</label>
+                            {% include "order/price_maket.html" with iname='wallpanel' ivalue=item.wallpanel icosts=costs.wallpanel icostid=item.wallpanel_cost_id_id %}
+                        </div>
+
+                        <!--wallcap-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">- окончания (шт)</label>
+                            {% include "order/price_maket.html" with iname='wallcap' ivalue=item.wallcap icosts=costs.wallcap icostid=item.wallcap_cost_id_id %}
+                        </div>
+
+                        <!--loop-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">ПЕТЛИ (шт)</label>
+                            {% include "order/price_maket.html" with iname='loop' ivalue=item.loop icosts=costs.loop icostid=item.loop_cost_id_id dis=1 %}
+                        </div>
+
+                        <!--handle-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">РУЧКИ (шт)</label>
+                            {% include "order/price_maket.html" with iname='handle' ivalue=item.handle icosts=costs.handle icostid=item.handle_cost_id_id dis=1 %}
+                        </div>
+
+                        <!--hitch-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">НАВЕСКИ (компл)</label>
+                            {% include "order/price_maket.html" with iname='hitch' ivalue=item.hitch icosts=costs.hitch icostid=item.hitch_cost_id_id dis=1 %}
+                        </div>
+
+                        <!--rail-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">РЕЙКА (шт)</label>
+                            {% include "order/price_maket.html" with iname='rail' ivalue=item.rail icosts=costs.rail icostid=item.rail_cost_id_id %}
+                        </div>
+
+                        <!--baguette-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">БАГЕТ (мп)</label>
+                            {% include "order/price_maket.html" with iname='baguette' ivalue=item.baguette icosts=costs.baguette icostid=item.baguette_cost_id_id dis=1 %}
+                        </div>
+
+                        <!--roof-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">КРЫША (м2)</label>
+                            {% include "order/price_maket.html" with iname='roof' ivalue=item.roof icosts=costs.roof icostid=item.roof_cost_id_id dis=1 %}
+                        </div>
+
+                        <!--baluster-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">БАЛЯСИНЫ (мп)</label>
+                            {% include "order/price_maket.html" with iname='baluster' ivalue=item.baluster icosts=costs.baluster icostid=item.baluster_cost_id_id %}
+                        </div>
+
+                        <!--socle-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">ЦОКОЛЬ (мп)</label>
+                            {% include "order/price_maket.html" with iname='socle' ivalue=item.socle icosts=costs.socle icostid=item.socle_cost_id_id %}
+                        </div>
+
+                        <!--drying-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">СУШКА (шт)</label>
+                            {% include "order/price_maket.html" with iname='drying' ivalue=item.drying icosts=costs.drying icostid=item.drying_cost_id_id %}
+                        </div>
+
+                        <!--backlight-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">ПОДСВЕТКА (шт)</label>
+                            {% include "order/price_maket.html" with iname='backlight' ivalue=item.backlight icosts=costs.backlight icostid=item.backlight_cost_id_id %}
+                        </div>
+
+                        <!--facade-->
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">ФАСАДЫ (м2)</label>
+                            {% include "order/price_maket.html" with iname='facade' ivalue=item.facade icosts=costs.facade icostid=item.facade_cost_id_id dis=1 %}
+                        </div>
+
+                        <!--facadeskin-->
+                        <div class="form-group row">
+                            <div class="col-sm-4">
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="facadeskinradio" name="facaderadios" value="0" {% if item.facadeskintype == 0 %}checked{% endif %}>
+                                    <label class="form-check-label" for="facadeskinradio">- пленка (м2)</label>
+                                </div>
+                            </div>
+                            {% include "order/price_maket.html" with iname='facadeskin' ivalue=item.facadeskin icosts=costs.facadeskin icostid=item.facadeskin_cost_id_id dis=1 %}
+                        </div>
+
+                        <!--facadeskingl-->
+                        <div class="form-group row">
+                            <div class="col-sm-4">
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="facadeskinglradio" name="facaderadios" value="1" {% if item.facadeskintype == 1 %}checked{% endif %}>
+                                    <label class="form-check-label" for="facadeskinglradio">- пленка гл (м2)</label>
+                                </div>
+                            </div>
+                            {% include "order/price_maket.html" with iname='facadeskingl' ivalue=item.facadeskingl icosts=costs.facadeskingl icostid=item.facadeskingl_cost_id_id dis=1 %}
+                        </div>
+
+                        <!--facadeplastic-->
+                        <div class="form-group row">
+                            <div class="col-sm-4">
+                                <div class="form-check">
+                                    <input type="radio" class="form-check-input" id="facadeplasticradio" name="facaderadios" value="2" {% if item.facadeskintype == 2 %}checked{% endif %}>
+                                    <label class="form-check-label" for="facadeplasticradio">- пластик (м2)</label>
+                                </div>
+                            </div>
+                            {% include "order/price_maket.html" with iname='facadeplastic' ivalue=item.facadeplastic icosts=costs.facadeplastic icostid=item.facadeplastic_cost_id_id dis=1 %}
+                        </div>
+
+                        <!--other-->
+                        <div class="form-group row">
+                            <label for="2" class="col-sm-4 col-form-label">ДР ФУРНИТУРА (руб)</label>
+                            <div class="col-sm-1">
+                            </div>
+                            <div class="col-sm-5">
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control sum" id="other" value="{{ item.othercost }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--totalsum-->
+                        <div class="form-group row">
+                            <label for="2" class="col-sm-4 col-form-label"><b>ИТОГО (руб)</b></label>
+                            <div class="col-sm-1">
+                            </div>
+                            <div class="col-sm-5">
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="md-form mt-0">
+                                    <input type="text" class="form-control" id="totalsum" value="{{ item.other }}">
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+
+    {% include "order/cupboard_modal_form.html" %}
+    {% include "_maket/confirm_form.html" %}
+
+
+
+{% endblock %}
+
+
+{% block js %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.14.0/jquery.validate.min.js"></script>
+
+    {#    <script type='text/javascript' src='https://mdbootstrap.com/wp-admin/load-scripts.php?c=gzip&amp;load%5B%5D=jquery-core,jquery-migrate&amp;ver=5.1.1'></script>#}
+    {##}
+    {#    <script type='text/javascript' src='https://mdbootstrap.com/wp-content/themes/mdbootstrap4/js/4.7.6/compiled.1022.min.js?ver=4.7.6'></script>#}
+
+    <script type="text/javascript">
+        function showCupboardModalForm(action, cupboardid) {
+            $("#action").val(action);
+            $("#cupboardid").val(cupboardid);
+            if (action == 'add') {
+                $(".modal-title").html('Добавление ящика');
+                $("#cupboardlstid").val('');
+                $("#cupboardcount").val('');
+            } else if (action == 'edit') {
+                $(".modal-title").html('Редактирование ящика');
+                $("#cupboardlstid").val($("#cupboardlstId" + cupboardid).html());
+                $("#cupboardcount").val($("#cupboardCount" + cupboardid).html());
+            }
+            $('#cupboardModalForm').modal('show');
+        }
+
+        function delCupboard(cupboardid) {
+            $("#action").val('del');
+            $("#cupboardid").val(cupboardid);
+            document.getElementsByName("cupboardActionForm")[0].submit();
+        }
+
+        $("input").keyup(function() {
+            calculated(true);
+        });
+
+        $("select").on('change', function() {
+            calculated(true);
+        });
+
+        $("input[name='facaderadios']").on('change', function () {
+            $("input[name='facaderadios']").each(function() {
+                var id = $(this).attr('id').replace('radio','');
+                $("#" + id + "sum").removeClass('sum');
+            });
+            var id = $(this).attr('id').replace('radio','');
+            $("#" + id + "sum").addClass('sum');
+
+            calculated(true)
+        });
+
+
+
+
+        function savePrice() {
+            var data = new Object();
+            var data2 = new Object();
+
+            $(".count:enabled").each(function() {
+                data[$(this).attr('id')] = $(this).val();
+            });
+
+            $("select").each(function() {
+                var costid = $(this).find("option:selected").attr('costid');
+                if (costid) {
+                    data2[$(this).attr('id')] = $(this).find("option:selected").attr('costid');
+                } else {
+                    data2[$(this).attr('id')] = null;
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "ajax/",
+                data: {
+                    action: 'save_price',
+                    priceid: '{% for item in price %}{{ item.id }}{% endfor %}',
+                    data: JSON.stringify(data),
+                    data2: JSON.stringify(data2),
+                    othercost: $("#other").val(),
+                    facadeskintype: $("input[name='facaderadios']:checked").val()
+                },
+                cache: false,
+
+                success: function (data) {
+                    console.log('ok');
+                },
+
+                error: function (request, error) {
+                    console.log('error:' + request.responseText)
+                },
+
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                },
+            });
+
+        }
+
+        function calculated(save) {
+            $(".count").each(function() {
+                if (!$(this).val()) {
+                    $(this).val('0');
+                }
+                var id = $(this).attr('id');
+                var rez = $(this).val() * $("#" + id + "_cost").val();
+                $("#" + id + "sum").val(rez);
+            });
+
+            if (save) {
+                savePrice();
+            }
+
+            var totalsum = 0;
+            $(".sum").each(function() {
+                if (!$(this).val()) {
+                    $(this).val('0');
+                }
+                totalsum += parseInt($(this).val());
+
+            });
+
+            $("#totalsum").val(totalsum);
+        }
+
+        window.onload = function() {
+            calculated(false);
+        };
+
+
+
+
+
+
+
+    </script>
+{% endblock %}

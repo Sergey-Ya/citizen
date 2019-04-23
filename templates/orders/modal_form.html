@@ -1,0 +1,84 @@
+{% load static %}
+
+<!--MODAL FORM-->
+<div class="modal fade" id="orderModalForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h5 class="modal-title w-100"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body mx-3">
+
+                <form id="orderActionForm">
+                    <input type="hidden" id="action" name="action">
+                    <input type="hidden" id="orderid" name="orderid">
+
+                    <div class="md-form mb-5">
+                        <input type="text" id="ordername" name="ordername" class="form-control validate" placeholder="Имя">
+                    </div>
+
+                    <div class="md-form mb-5">
+                        <input type="text" id="ordercomment" name="ordercomment" class="form-control validate" placeholder="Комментарий">
+                    </div>
+
+                    <button type="button" class="btn btn-outline-primary btn-sm btn-rounded waves-effect" data-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary btn-sm btn-rounded" >Сохранить</button>
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+<!--MODAL FORM-->
+{#<div class="modal fade" id="modalAddOrderForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">#}
+{#    <div class="modal-dialog" role="document">#}
+{##}
+{#        <div class="modal-content">#}
+{#            <div class="modal-header text-center">#}
+{#                <h5 class="modal-title w-100">Новый заказ</h5>#}
+{#                <button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
+{#                    <span aria-hidden="true">&times;</span>#}
+{#                </button>#}
+{#            </div>#}
+{##}
+{#            <div class="modal-body mx-3">#}
+{##}
+{#                <form action="{% url 'orders' %}" class="needs-validation" novalidate method="post">#}
+{##}
+{#                    {% csrf_token %}#}
+{##}
+{#                    <div class="md-form mb-5">#}
+{#                        <label for="ordername">Имя</label>#}
+{#                        <input type="text" id="ordername" name="ordername" class="form-control" required>#}
+{#                        <div class="invalid-feedback">Пожалуйста введите имя заказа</div>#}
+{#                    </div>#}
+{##}
+{#                    <div class="md-form mb-5">#}
+{#                        <label for="ordercomment">Описание</label>#}
+{#                        <input type="text" id="ordercomment" name="ordercomment" class="form-control">#}
+{#                    </div>#}
+{##}
+{#                    <button class="btn btn-primary btn-sm btn-rounded" type="submit">Сохранить</button>#}
+{#                </form>#}
+{##}
+{#            </div>#}
+{##}
+{#        </div>#}
+{##}
+{#    </div>#}
+{#</div>#}
+

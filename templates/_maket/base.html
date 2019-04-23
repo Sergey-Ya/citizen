@@ -61,21 +61,10 @@
 {% include "_maket/footer.html" %}
 
 
-
 <script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
-
-
-
-<script type="text/javascript" src="{% static 'js/mdb4/mdb.min.js' %}"></script>
+{#<script type="text/javascript" src="{% static 'js/mdb4/mdb.min.js' %}"></script>#}
 <script type="text/javascript" src="{% static 'js/mdb4/compiled.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/mdb4/footer-functions.js' %}"></script>
-<script type='text/javascript' src='https://mdbootstrap.com/wp-admin/load-scripts.php?c=gzip&amp;load%5B%5D=wp-embed,jquery-ui-core,jquery-ui-widget,jquery-ui-mouse,jquery-ui-slider&amp;ver=4.9.8'></script>
-{#<script type='text/javascript' src='https://mdbootstrap.com/wp-content/themes/mdbootstrap4/js/4.5.13/compiled.0.min.js?ver=4.5.13'></script>#}
-<script type='text/javascript' src='https://mdbootstrap.com/wp-content/themes/mdbootstrap4/js/4.7.6/compiled.0.min.js?ver=4.7.6'></script>
-
 <script type="text/javascript" src="{% static 'js/alert.js' %}"></script>
 
 <script>
@@ -94,6 +83,28 @@
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     });
+
+
+
+        <!--CONFIRM FORM-->
+    var confirmFormAction = null;
+    var confirmFormParam1 = null;
+    var confirmFormParam2 = null;
+    var confirmFormParam3 = null;
+    function showConfirmForm(content, action, param1, param2, param3) {
+        confirmFormAction = action;
+        confirmFormParam1 = param1;
+        confirmFormParam2 = param2;
+        confirmFormParam3 = param3;
+        $('#confirmModalForm .modal-body').html(content);
+        $('#confirmModalForm').modal('show');
+    }
+    function confirmFormSubmit() {
+        confirmFormAction(confirmFormParam1, confirmFormParam2, confirmFormParam3);
+        $('#confirmModalForm').modal('hide');
+    }
+    <!--END-->
+
 
 </script>
 

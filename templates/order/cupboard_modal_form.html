@@ -1,12 +1,12 @@
 {% load static %}
 
 <!--MODAL FORM-->
-<div class="modal fade" id="modalAddCupboardForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="cupboardModalForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
 
         <div class="modal-content">
             <div class="modal-header text-center">
-                <h5 class="modal-title w-100">Добавление ящика</h5>
+                <h5 class="modal-title w-100"></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -14,14 +14,17 @@
 
             <div class="modal-body mx-3">
 
-                <form action="{% url 'orderinfo' orderid=order.id %}" class="needs-validation container" novalidate method="post">
+                <form name="cupboardActionForm" action="{% url 'orderinfo' orderid=order.id %}" class="needs-validation container" novalidate method="post">
 
                     {% csrf_token %}
 
+                    <input type="hidden" id="action" name="action">
+                    <input type="hidden" id="cupboardid" name="cupboardid">
+
                     <div class="md-form mb-5">
-                        <select id="cupboardid" name="cupboardid" class="mdb-select md-form" required>
+                        <select id="cupboardlstid" name="cupboardlstid" class="mdb-select md-form" required>
                             <option value="" disabled selected>Выберите ящик</option>
-                            {% for item in base %}
+                            {% for item in cupboardlst %}
                                 <option value="{{ item.id }}">{{ item.name }}</option>
                             {% endfor %}
                         </select>
@@ -40,7 +43,9 @@
                         </select>
                     </div>
 
-                    <button class="btn btn-primary btn-sm btn-rounded" type="submit">Сохранить</button>
+                    <button type="button" class="btn btn-outline-primary btn-sm btn-rounded waves-effect" data-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary btn-sm btn-rounded" >Сохранить</button>
+
                 </form>
 
             </div>

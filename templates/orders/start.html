@@ -1,0 +1,232 @@
+{% extends "_maket/base.html" %}
+
+{% load static %}
+
+{% block css2 %}
+    <style type="text/css">
+        .md-form {
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+
+        .modal-body {
+            margin-top: 20px;
+        }
+    </style>
+{% endblock %}logo2
+
+
+{% block content %}
+
+    <!--HEADER-->
+    <div class="row myheader text-center">
+        <div class="col">
+            <h2>Список заказов</h2>
+        </div>
+    </div>
+
+
+    <!--CONTENT-->
+    <div class="row">
+        <div class="col">
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th style="width: 180px;">Дата создания</th>
+                    <th style="width: 300px;">Имя</th>
+                    <th>Комментарий</th>
+                    <th style="width: 150px"></th>
+                </tr>
+                </thead>
+                <tbody id="orders">
+                {% for order in orders %}
+                    <tr id="order{{ order.id }}" >
+                        <td>{{ order.created_at|date:"Y d M H:i" }}</td>
+                        <td id="orderName{{ order.id }}" class="order-name">{{ order.name }}</td>
+                        <td id="orderComment{{ order.id }}">{{ order.comment }}</td>
+                        <td class="text-right">
+                            <a onclick="showOrderModalForm('edit', '{{ order.id }}')"><i class="fas fa-pencil-alt"></i></a>
+                            <a onclick="showConfirmForm('Удалить заказ и всю информацию о нем?', delOrder, '{{ order.id }}');"><i class="fas fa-trash-alt"></i></a>
+                            <a href="{% url 'orderinfo' order.id %}"><i class="far fa-eye"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <a onclick="showOrderModalForm('add')" class="pull-right">Добавить заказ <i class="fas fa-plus color-success"></i></a>
+
+        </div>
+    </div>
+
+
+    {% include "orders/modal_form.html" %}
+    {% include "_maket/confirm_form.html" %}
+
+
+
+
+{% endblock %}
+
+
+{% block js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.14.0/jquery.validate.min.js"></script>
+
+    <script type="text/javascript">
+
+        function showOrderModalForm(action, orderid) {
+            $("#action").val(action);
+            $("#orderid").val(orderid);
+            if (action == 'add') {
+                $(".modal-title").html('Добавление заказа');
+                $("#ordername").val('');
+                $("#ordercomment").val('');
+            } else if (action == 'edit') {
+                $(".modal-title").html('Редактирование заказа');
+                $("#ordername").val($("#orderName" + orderid).html());
+                $("#ordercomment").val($("#orderComment" + orderid).html());
+            }
+            $('#orderModalForm').modal('show');
+        }
+
+        $('#orderActionForm').validate ({
+            debug: true,
+            errorClass: "active",
+            rules: {
+                ordername: {
+                    required: true,
+                    minlength: 3,
+                    unique: "UNIQUE",
+                },
+                action: "required",
+            },
+            messages: {
+                ordername: {
+                    required: "Обязательное поле",
+                    minlength: "Минимальная длинна Имени 3 символа"
+                },
+                action: "Please provide some data"
+            },
+
+            submitHandler: function(form) {
+                if (form.action.value == 'add') {
+                    addOrder(form.ordername.value, form.ordercomment.value)
+                } else if (form.action.value == 'edit') {
+                    editOrder(form.orderid.value, form.ordername.value, form.ordercomment.value)
+                }
+                $("#orderModalForm").modal('hide');
+                {#form.submit();#}
+            }
+        });
+
+        $.validator.addMethod("unique", function(value, element) {
+                var rez = true;
+                $(".order-name").each(function (i, elem) {
+                    if ($(this).html() == value) {
+                        rez = false;
+                    }
+                });
+                return rez;
+            },
+            "Заказ с таким именем уже существует");
+
+
+
+        function addOrder(name, comment) {
+            $.ajax({
+                type: "POST",
+                url: "ajax/",
+                data: {
+                    action: 'add_order',
+                    name: name,
+                    comment: comment
+                },
+                cache: false,
+
+                success: function (data) {
+                    $("#orders").prepend("<tr id='order" + data.id + "'>" +
+                        "<td>" + data.createdat + "</td>" +
+                        "<td id='orderName" + data.id + "' class='order-name'>" + name + "</td>" +
+                        "<td id='orderComment" + data.id + "'>" + comment + "</td>" +
+                        "<td class='text-right'>" +
+                        "<a onclick='showOrderModalForm(\"edit\", \"" + data.id + "\")'><i class='fas fa-pencil-alt'></i></a>\n" +
+                        "<a onclick='showConfirmForm(\"Удалить заказ и всю информацию о нем?\", delOrder, \"" + data.id + "\")'>" +
+                        "<i class='fas fa-trash-alt'></i></a>\n" +
+                        "<a href='/orders/" + data.id + "'><i class='far fa-eye'></i></a>\n" +
+                        "</td>" +
+                        "</tr>");
+                    $.alert("Заказ успешно добавлен", {type: 'success'});
+                },
+
+                error: function (request, error) {
+                    $.alert(request.responseText, {type: 'danger'});
+                },
+
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                },
+            });
+        }
+
+        function editOrder(id, name, comment) {
+            $.ajax({
+                type: "POST",
+                url: "ajax/",
+                data: {
+                    action: 'edit_order',
+                    id: id,
+                    name: name,
+                    comment: comment
+                },
+                cache: false,
+
+                success: function (data) {
+                    $("#orderName" + id).html(name);
+                    $("#orderComment" + id).html(comment);
+                    $.alert("Заказ успешно отредактирован", {type: 'success'});
+                },
+
+                error: function (request, error) {
+                    $.alert(request.responseText, {type: 'danger'});
+                },
+
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                },
+            });
+        }
+
+        function delOrder(id) {
+            $.ajax({
+                type: "POST",
+                url: "ajax/",
+                data: {
+                    action: 'del_order',
+                    id: id
+                },
+                cache: false,
+
+                success: function (data) {
+                    $("#order" + id).remove();
+                    $.alert("Заказ успешно удален", {type: 'success'});
+                },
+
+                error: function (request, error) {
+                    $.alert(request.responseText, {type: 'danger'});
+                },
+
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                },
+            });
+        }
+
+    </script>
+{% endblock %}
